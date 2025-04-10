@@ -1,0 +1,60 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+*.egg-info/
+build/
+dist/
+
+# Python virtual environment
+venv/
+.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Editor settings
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Streamlit generated media
+**/.streamlit/
+**/media/
+
+# Checkpoints, models, weights
+*.ckpt
+*.pb
+*.meta
+*.tflite
+*.pt
+*.onnx
+
+# Data outputs
+output/
+data/tmp/
+runs/
+videos/
+results/
+
+# Deep SORT pretrained model folders
+app/tracking/deep_sort/resources/networks/
+checkpoint/
+
+# Ignore YOLO/Ultralytics cache
+*.cache
+ultralytics/
+
+# Git submodules (avoid nesting errors)
+app/tracking/deep_sort/deep/
+app/tracking/deep_sort/resources/detections/MOT16_POI_test/MOT16-03.npy

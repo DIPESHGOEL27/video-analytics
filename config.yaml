@@ -1,0 +1,19 @@
+video_input: "data/input_video.mp4"
+video_output: "output/processed_video.mp4"
+
+yolo:
+  model_path: "app/models/yolov8n.pt"
+  confidence_threshold: 0.5
+  nms_threshold: 0.4
+  classes: [] # Leave empty for all classes
+
+deep_sort:
+  model_path: "app/tracking/deep_sort/resources/networks/mars-small128.pb"
+  max_age: 30
+  n_init: 3
+  max_cosine_distance: 0.4
+  nn_budget: 100
+
+alert:
+  enabled: true
+  alert_zone: [100, 100, 400, 400] # x, y, w, h
