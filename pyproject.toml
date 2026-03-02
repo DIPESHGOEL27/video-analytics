@@ -1,0 +1,18 @@
+[project]
+name = "video-analytics"
+version = "2.0.0"
+description = "AI-Powered Video Analytics — real-time detection, tracking & zone analytics"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["E501"]  # line length handled by formatter

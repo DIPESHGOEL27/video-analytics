@@ -1,38 +1,35 @@
-# Byte-compiled / cache files
+# ─── Python ───
 __pycache__/
 *.py[cod]
-
-# C extensions
 *.so
-
-# Distribution / packaging
 *.egg-info/
 build/
 dist/
 
-# Python virtual environment
+# ─── Virtual environment ───
 venv/
+.venv/
+
+# ─── Environment / secrets ───
 .env
 
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/
-
-# Editor settings
+# ─── Editor / IDE ───
 .vscode/
 .idea/
+*.swp
 
-# System files
+# ─── OS ───
 .DS_Store
 Thumbs.db
 
-# Logs
+# ─── Logs ───
 *.log
 
-# Streamlit generated media
+# ─── Streamlit ───
 **/.streamlit/
 **/media/
 
-# Checkpoints, models, weights
+# ─── Model weights (download separately) ───
 *.ckpt
 *.pb
 *.meta
@@ -40,21 +37,29 @@ Thumbs.db
 *.pt
 *.onnx
 
-# Data outputs
+# ─── Data & outputs ───
 output/
 data/tmp/
 runs/
 videos/
 results/
+temp_video*
+*.avi
 
-# Deep SORT pretrained model folders
-app/tracking/deep_sort/resources/networks/
-checkpoint/
-
-# Ignore YOLO/Ultralytics cache
+# ─── Ultralytics cache ───
 *.cache
 ultralytics/
+checkpoint/
 
-# Git submodules (avoid nesting errors)
-app/tracking/deep_sort/deep/
-app/tracking/deep_sort/resources/detections/MOT16_POI_test/MOT16-03.npy
+# ─── Videos (large binaries) ───
+*.mp4
+*.mkv
+
+# ─── pytest cache ───
+.pytest_cache/
+
+# ─── Backup / junk files ───
+*- Copy*
+*- Copy.*
+tempCodeRunnerFile*
+cvenv.txt

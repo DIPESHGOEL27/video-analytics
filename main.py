@@ -1,104 +1,65 @@
-# main.py
-import cv2
-import os
-import yaml
+"""AI-Powered Video Analytics — Streamlit entrypoint.
+
+This is the landing page of the multi-page dashboard.
+Processing pages live under ``pages/``.
+"""
+
+from __future__ import annotations
+
 import streamlit as st
-import tempfile
-import time
 
-from app.utils.config_loader import load_config
-from app.detection.yolo_detector import YoloDetector
-from app.tracking.deep_sort.deep_sort_tracker import DeepSortTracker
-from app.analytics.frame_processor import FrameProcessor
+from app.config import load_settings
 
-def process_video(input_path, output_path, detector, tracker, processor, fps):
-    
-    if isinstance(input_path, str):
-        cap = cv2.VideoCapture(input_path)
-    else:
-        tfile = tempfile.NamedTemporaryFile(delete=False)
-        tfile.write(input_path.read())
-        cap = cv2.VideoCapture(tfile.name)
+# ── Page config (must be the FIRST Streamlit call) ──
+st.set_page_config(
+    page_title="AI Video Analytics",
+    page_icon="🎯",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+settings = load_settings()
 
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    out = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (frame_width, frame_height))
 
-    progress_bar = st.progress(0)
-    status_text = st.empty()
-    frame_counter = 0
-    start_time = time.time()
+def main() -> None:
+    st.title("🎯 AI-Powered Video Analytics")
+    st.markdown("---")
 
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
+    st.markdown(
+        """
+        ### Welcome
 
-        processed_frame = processor.process_frame(frame)
-        out.write(processed_frame)
+        This system provides **real-time object detection, multi-object tracking,
+        and zone-based analytics** powered by **YOLO11** and **BotSORT**.
 
-        frame_counter += 1
-        elapsed = time.time() - start_time
-        fps_now = frame_counter / elapsed
-        remaining = (total_frames - frame_counter) / (fps_now + 1e-5)
+        Use the sidebar to navigate between pages:
 
-        progress = frame_counter / total_frames
-        progress_bar.progress(min(int(progress * 100), 100))
-        status_text.text(f"Processing frame {frame_counter}/{total_frames} - "
-                         f"ETA: {int(remaining)} sec")
+        | Page | Description |
+        |------|-------------|
+        | **Live Analytics** | Upload a video or use a live camera for real-time processing |
+        | **Configuration** | Tune model parameters, define tracking zones, and alert rules |
+        | **Alert Log** | Browse the history of triggered alerts with timestamps |
 
-    cap.release()
-    out.release()
-    status_text.text("✅ Video processing complete.")
-    st.session_state['output_path'] = output_path
-    st.session_state['video_processed'] = True
-    
+        ---
+        ### Architecture
 
-def main():
-    st.title("🎥 AI-Powered Video Analytics Dashboard")
-    st.markdown("Upload a video and watch AI-driven tracking and analytics in action!")
+        ```
+        Video Source  →  YOLO11 Detection  →  BotSORT Tracking  →  Zone Analytics  →  AlertService
+                                                                          ↓
+                                                                   Streamlit Dashboard
+        ```
 
-    uploaded_video = st.file_uploader("Upload a video file", type=["mp4", "avi", "mov"])
+        ### Tech Stack
 
-    if 'video_processed' not in st.session_state:
-        st.session_state['video_processed'] = False
+        - **Detection**: Ultralytics YOLO11 (object detection + instance segmentation)
+        - **Tracking**: BotSORT (built-in Ultralytics tracker)
+        - **Alerts**: Configurable rules — zone intrusion, loitering, crowd detection
+        - **UI**: Streamlit multi-page dashboard with real-time Plotly charts
+        """
+    )
 
-    if uploaded_video is not None and not st.session_state['video_processed']:
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as tmp_input:
-            tmp_input.write(uploaded_video.read())
-            input_path = tmp_input.name
+    st.sidebar.success("Select a page above to get started.")
 
-        output_path = os.path.join("output", "processed_video.mp4")
-
-        config = load_config("config.yaml")
-        config['video_input'] = input_path
-        config['video_output'] = output_path
-        config['fps'] = 30.0  # default fps
-
-        detector = YoloDetector(config)
-        tracker = DeepSortTracker(config)
-        processor = FrameProcessor(detector, tracker, config)
-
-        st.info("Processing video... Please wait.")
-        process_video(input_path, output_path, detector, tracker, processor, config['fps'])
-
-        if st.session_state['video_processed']:
-         
-            st.download_button(
-                label="Download Processed Video",
-                data=open(output_path, "rb"),
-                file_name="processed_video.mp4",
-                mime="video/mp4"
-            )
-
-        else:
-            st.error("Failed to load processed video.")
-
-        
 
 if __name__ == "__main__":
     main()

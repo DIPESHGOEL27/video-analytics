@@ -1,19 +1,36 @@
+# ─────────────────────────────────────────────────────────
+# AI-Powered Video Analytics — config.yaml
+# ─────────────────────────────────────────────────────────
+
 video_input: "data/input_video.mp4"
 video_output: "output/processed_video.mp4"
 
+# ── YOLO11 detection / segmentation ──
 yolo:
-  model_path: "app/models/yolov8n.pt"
-  confidence_threshold: 0.5
-  nms_threshold: 0.4
-  classes: [] # Leave empty for all classes
+  model_path: "yolo11n.pt"
+  seg_model_path: "yolo11n-seg.pt"
+  confidence: 0.5
+  iou: 0.5
+  classes: [0] # 0 = person (COCO)
 
-deep_sort:
-  model_path: "app/tracking/deep_sort/resources/networks/mars-small128.pb"
+# ── BotSORT tracker ──
+tracking:
+  tracker: "botsort.yaml"
   max_age: 30
-  n_init: 3
-  max_cosine_distance: 0.4
-  nn_budget: 100
+  min_hits: 3
 
+# ── Alert system ──
 alert:
   enabled: true
-  alert_zone: [100, 100, 400, 400] # x, y, w, h
+  cooldown_seconds: 10
+  loiter_threshold_seconds: 5.0
+  crowd_threshold: 5
+  default_zone: [100, 100, 400, 400]
+
+# ── Streamlit UI ──
+ui:
+  page_title: "AI-Powered Video Analytics"
+  default_zone: [150, 150, 1130, 570]
+  display_skip_frames: 3
+  max_upload_mb: 200
+  output_format: "mp4"
